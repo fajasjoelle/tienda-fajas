@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fajas Joelle Premium</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+--bg:#FDF8F3;
+--card:#FFFFFF;
+--text:#3E342F;
+--gold:#C9A646;
+--gold-soft:#E8D3A3;
+--gold-dark:#9F7B2E;
+--btn-gradient:linear-gradient(135deg,#E8D3A3,#C9A646,#9F7B2E);
+}
+
+body{
+margin:0;
+font-family:Inter;
+background:var(--bg);
+color:var(--text);
+}
+
+.header{
+display:flex;
+justify-content:space-between;
+padding:1rem 1.5rem;
+background:linear-gradient(to right,#fff,#f7efe5);
+border-bottom:1px solid #eee;
+position:sticky;
+top:0;
+z-index:1000;
+}
+
+.logo{
+letter-spacing:3px;
+cursor:pointer;
+font-weight:600;
+font-size:1.6rem;
+color:var(--gold-dark);
+}
+
+.hero{
+text-align:center;
+padding:2rem;
+}
+
+.hero h1{
+font-family:"Playfair Display";
+font-size:2.6rem;
+color:var(--gold-dark);
+}
+
+.products{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:1.5rem;
+padding:1.5rem;
+}
+
+.card{
+background:var(--card);
+padding:1rem;
+border-radius:18px;
+box-shadow:0 10px 25px rgba(201,166,70,0.15);
+transition:0.3s;
+border:1px solid #f0e6d2;
+}
+
+.card:hover{
+transform:translateY(-6px);
+box-shadow:0 15px 35px rgba(201,166,70,0.25);
+}
+
+.card img{
+width:100%;
+height:240px;
+object-fit:contain;
+background:#faf6ef;
+border-radius:12px;
+padding:10px;
+}
+
+.price{
+font-size:1.6rem;
+color:var(--gold-dark);
+font-weight:bold;
+}
+
+.old{
+text-decoration:line-through;
+color:#aaa;
+}
+
+.btn{
+background:var(--btn-gradient);
+color:white;
+padding:0.7rem 1.2rem;
+border:none;
+border-radius:25px;
+cursor:pointer;
+width:100%;
+margin-top:10px;
+font-weight:600;
+}
+
+.btn:hover{
+transform:scale(1.03);
+}
+
+.wa-float{
+position:fixed;
+bottom:20px;
+right:20px;
+background:var(--btn-gradient);
+color:white;
+width:55px;
+height:55px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+box-shadow:0 5px 15px rgba(201,166,70,0.4);
+cursor:pointer;
+z-index:9999;
+}
+
+.admin{
+position:fixed;
+top:0;
+right:0;
+width:320px;
+height:100%;
+background:#fffaf2;
+padding:1.5rem;
+display:none;
+overflow:auto;
+z-index:9999;
+box-shadow:-5px 0 25px rgba(201,166,70,0.2);
+}
+
+.admin input{
+width:100%;
+margin-bottom:10px;
+padding:10px;
+border-radius:10px;
+border:1px solid #e6d8b5;
+}
+
+.admin-list div{
+margin-bottom:10px;
+background:white;
+padding:10px;
+border-radius:10px;
+display:flex;
+justify-content:space-between;
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+<div class="logo" id="logo">FAJAS JOELLE</div>
+</header>
+
+<section class="hero">
+<h1>Fajas Premium Colombianas</h1>
+<p>Define tu silueta con elegancia ✨</p>
+</section>
+
+<div class="products" id="products"></div>
+
+<!-- BOTON WHATSAPP -->
+<div class="wa-float" onclick="wa()">💬</div>
+
+<!-- ADMIN -->
+<div class="admin" id="admin">
+<button class="btn" onclick="closeAdmin()">Cerrar ❌</button>
+
+<h3>Panel Admin</h3>
+
+<input id="title" placeholder="Nombre">
+<input id="price" type="number" placeholder="Precio">
+<input id="old" type="number" placeholder="Precio anterior">
+<input type="file" id="file">
+
+<button class="btn" onclick="addProduct()">Guardar producto</button>
+
+<h4>Productos</h4>
+<div id="adminList" class="admin-list"></div>
+</div>
+
+<script>
+const logo = document.getElementById("logo");
+const admin = document.getElementById("admin");
+const productsDiv = document.getElementById("products");
+const adminList = document.getElementById("adminList");
+
+const titleInput = document.getElementById("title");
+const priceInput = document.getElementById("price");
+const oldInput = document.getElementById("old");
+const fileInput = document.getElementById("file");
+
+// WHATSAPP AL NUMERO CORRECTO
+function wa(product=""){
+let msg = product 
+? `Hola 😊 quiero comprar ${product}. ¿Me das más info?` 
+: "Hola 😊 estoy interesada en las fajas";
+
+window.open(`https://wa.me/573209152563?text=${encodeURIComponent(msg)}`);
+}
+
+// ABRIR ADMIN
+let pressTimer;
+
+logo.addEventListener("mousedown",()=>{
+pressTimer = setTimeout(()=>{
+let pass = prompt("Clave admin");
+if(pass==="admin2026"){
+admin.style.display="block";
+}
+},800);
+});
+
+logo.addEventListener("mouseup",()=>clearTimeout(pressTimer));
+
+// CERRAR ADMIN
+function closeAdmin(){
+admin.style.display = "none";
+}
+
+// CERRAR CON ESC
+document.addEventListener("keydown", function(e){
+if(e.key === "Escape"){
+admin.style.display = "none";
+}
+});
+
+// AGREGAR PRODUCTO
+function addProduct(){
+let file = fileInput.files[0];
+
+if(!file){
+alert("Selecciona imagen");
+return;
+}
+
+let reader = new FileReader();
+
+reader.onload = function(e){
+
+let product = {
+title: titleInput.value,
+price: priceInput.value,
+old: oldInput.value,
+img: e.target.result
+};
+
+let products = JSON.parse(localStorage.getItem("products")) || [];
+
+products.push(product);
+
+localStorage.setItem("products", JSON.stringify(products));
+
+alert("Producto guardado ✅");
+
+titleInput.value="";
+priceInput.value="";
+oldInput.value="";
+fileInput.value="";
+
+loadProducts();
+};
+
+reader.readAsDataURL(file);
+}
+
+// CARGAR PRODUCTOS
+function loadProducts(){
+let products = JSON.parse(localStorage.getItem("products")) || [];
+
+let html = "";
+let adminHTML = "";
+
+products.forEach((p,i)=>{
+
+html += `
+<div class="card">
+<img src="${p.img}">
+<h3>${p.title}</h3>
+${p.old ? `<div class="old">$${p.old}</div>` : ""}
+<div class="price">$${p.price}</div>
+<button class="btn" onclick="wa('${p.title}')">Comprar</button>
+</div>
+`;
+
+adminHTML += `
+<div>
+<span>${p.title}</span>
+<button onclick="deleteProduct(${i})">❌</button>
+</div>
+`;
+
+});
+
+productsDiv.innerHTML = html;
+adminList.innerHTML = adminHTML;
+}
+
+// ELIMINAR
+function deleteProduct(i){
+let products = JSON.parse(localStorage.getItem("products")) || [];
+products.splice(i,1);
+localStorage.setItem("products", JSON.stringify(products));
+loadProducts();
+}
+
+// INICIO
+window.onload = loadProducts;
+</script>
+
+</body>
+</html>
